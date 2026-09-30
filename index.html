@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZZZRPG — Ficha de Agente</title>
+<style>
+:root{
+  --bg:#090c12;--panel:#121720;--panel2:#191f2a;--line:#303847;
+  --text:#f4f6fa;--muted:#9ca6b5;--accent:#2f8cff;--accent2:#69b3ff;
+  --green:#b9ff45;--danger:#ff5f75;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 20% 0%,#182333 0,#090c12 42%);
+color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{position:sticky;top:0;z-index:20;background:#0a0e14ed;backdrop-filter:blur(14px);
+border-bottom:1px solid var(--line);padding:18px}
+.header-inner{max-width:1200px;margin:auto;display:flex;justify-content:space-between;gap:15px;align-items:center}
+.logo{font-size:24px;font-weight:900;letter-spacing:.5px}.sub{color:var(--muted);font-size:12px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 13px;
+border-radius:9px;cursor:pointer;font-weight:700}
+button:hover{border-color:var(--accent2)}
+button.primary{background:var(--accent);border-color:var(--accent);color:white}
+button.danger{color:#ff9aa8}
+main{max-width:1200px;margin:auto;padding:20px}
+.tabs{display:flex;gap:7px;overflow:auto;padding-bottom:12px}
+.tab{white-space:nowrap}.tab.active{background:var(--accent);border-color:var(--accent)}
+.page{display:none}.page.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.c12{grid-column:span 12}.c8{grid-column:span 8}.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}
+@media(max-width:800px){.c8,.c6,.c4,.c3{grid-column:span 12}.header-inner{align-items:flex-start;flex-direction:column}}
+h2{font-size:18px;margin:0 0 13px}h3{font-size:14px;margin:0 0 8px}
+label{display:block;color:var(--muted);font-size:11px;margin:0 0 5px}
+input,select,textarea{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);
+border-radius:8px;padding:10px;outline:none;font:inherit}
+select{cursor:pointer}
+select:focus,input:focus,textarea:focus{border-color:var(--accent)}
+textarea{min-height:110px;resize:vertical}
+.field{margin-bottom:8px}
+.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+@media(max-width:600px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.stat b{display:block;font-size:12px}.stat input{text-align:center;margin-top:6px}
+.skill-head,.skill-row{display:grid;grid-template-columns:2fr .7fr .8fr .8fr .8fr 1fr;gap:8px;align-items:center}
+.skill-head{color:var(--muted);font-size:11px;padding:0 8px 7px}
+.skill-row{padding:8px;border-top:1px solid #252c38}
+.skill-name{font-weight:750}.tag{font-size:9px;border:1px solid var(--line);padding:2px 5px;border-radius:5px;color:var(--muted)}
+.tag.home{color:var(--green);border-color:#486126}
+.skill-row input{padding:7px}
+.check{text-align:center}.check input{width:auto}
+.total{font-weight:900;text-align:center}
+@media(max-width:720px){
+ .skill-head{display:none}
+ .skill-row{grid-template-columns:1fr 1fr 1fr;gap:6px}
+ .skill-name{grid-column:span 3}
+}
+.notice{background:#101a28;border:1px solid #263c58;border-radius:10px;padding:10px;color:#b8d8ff;font-size:12px}
+.trail-box{margin-top:10px;background:var(--panel2);border:1px solid var(--line);padding:12px;border-radius:10px}
+.trail-box h3{color:var(--accent2)}
+.empty{color:var(--muted);font-size:13px;padding:12px 0}
+.list-card{background:var(--panel2);border:1px solid var(--line);padding:11px;border-radius:9px;margin-bottom:8px}
+.list-card b{display:block;margin-bottom:4px}.list-card small{color:var(--muted)}
+@media print{
+ header,.tabs,.actions{display:none!important}body{background:white;color:black}.card{break-inside:avoid;border:1px solid #aaa}
+ .page{display:block!important}input,select,textarea{color:black;background:white}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="header-inner">
+<div><div class="logo">ZZZRPG — FICHA DE AGENTE</div><div class="sub">Zenless Zone Zero × Ordem Paranormal</div></div>
+<div class="actions">
+<button class="primary" onclick="saveSheet()">Salvar</button>
+<button onclick="exportSheet()">Exportar</button>
+<button onclick="importSheet()">Importar</button>
+<button onclick="window.print()">Imprimir / PDF</button>
+<button class="danger" onclick="clearSheet()">Limpar</button>
+</div>
+</div>
+</header>
+
+<main>
+<nav class="tabs">
+<button class="tab active" data-page="personagem">Personagem</button>
+<button class="tab" data-page="pericias">Perícias</button>
+<button class="tab" data-page="origem">Origem</button>
+<button class="tab" data-page="habilidades">Habilidades</button>
+<button class="tab" data-page="equipamento">Equipamento</button>
+</nav>
+
+<section id="personagem" class="page active">
+<div class="grid">
+<div class="card c12"><h2>Identidade</h2><div class="grid">
+<div class="c4 field"><label>Nome</label><input id="nome"></div>
+<div class="c4 field"><label>Jogador</label><input id="jogador"></div>
+<div class="c4 field"><label>Codinome</label><input id="codinome"></div>
+<div class="c3 field"><label>Raça</label>
+<select id="raca"><option value="">Selecione...</option><option>Humano</option><option>Oni</option><option>Thiren</option><option>Construto Inteligente</option></select></div>
+<div class="c3 field"><label>Classe</label>
+<select id="classe"><option value="">Selecione...</option><option>Atordoador</option><option>Ataque</option><option>Anômalo</option><option>Ruptura</option><option>Suporte</option><option>Armeiro</option></select></div>
+<div class="c3 field"><label>Trilha</label><select id="trilha"><option value="">Selecione uma classe primeiro...</option></select></div>
+<div class="c3 field"><label>NEX</label><select id="nex"><option>5%</option><option>10%</option><option>15%</option><option>20%</option><option>25%</option><option>30%</option><option>35%</option><option>40%</option><option>45%</option><option>50%</option><option>55%</option><option>60%</option><option>65%</option><option>70%</option><option>75%</option><option>80%</option><option>85%</option><option>90%</option><option>95%</option><option>99%</option></select></div>
+<div class="c3 field"><label>Elemento</label><select id="elemento"><option value="">Selecione...</option><option>Físico</option><option>Fogo</option><option>Gelo</option><option>Elétrico</option><option>Vento</option><option>Éter</option><option>Lumiflux</option><option>Shadow</option><option>Nullfrost</option></select></div>
+<div class="c3 field"><label>Origem</label><select id="origemSelect"><option value="">Selecione na aba Origem...</option></select></div>
+<div class="c3 field"><label>PV atual / máximo</label><input id="pv" placeholder="0 / 0"></div>
+<div class="c3 field"><label>PE atual / máximo</label><input id="pe" placeholder="0 / 0"></div>
+<div class="c3 field"><label>Defesa</label><input id="defesa" value="10"></div>
+<div class="c3 field"><label>Deslocamento</label><input id="deslocamento" value="9m"></div>
+</div></div>
+
+<div class="card c6"><h2>Atributos</h2><div class="stat-grid">
+<div class="stat"><b>FOR</b><input id="FOR" type="number" value="0"></div>
+<div class="stat"><b>AGI</b><input id="AGI" type="number" value="0"></div>
+<div class="stat"><b>INT</b><input id="INT" type="number" value="0"></div>
+<div class="stat"><b>PRE</b><input id="PRE" type="number" value="0"></div>
+<div class="stat"><b>VIG</b><input id="VIG" type="number" value="0"></div>
+</div></div>
+
+<div class="card c6"><h2>Combate</h2><div class="grid">
+<div class="c6 field"><label>Esquiva</label><input id="esquiva"></div>
+<div class="c6 field"><label>Bloqueio</label><input id="bloqueio"></div>
+<div class="c6 field"><label>Proteção</label><input id="protecao"></div>
+<div class="c6 field"><label>Resistências</label><input id="resistencias"></div>
+</div></div>
+</div>
+</section>
+
+<section id="pericias" class="page">
+<div class="card">
+<h2>Perícias</h2>
+<div class="notice">As perícias seguem a estrutura de atributos + treinamento usada na ficha de Ordem Paranormal. O nível de treinamento pode ser selecionado por toque; o valor final é calculado automaticamente. citeturn0search14turn0search1</div>
+<br>
+<div class="skill-head"><div>PERÍCIA</div><div>ATR.</div><div>TREINO</div><div>OUTROS</div><div>DADOS</div><div>TOTAL</div></div>
+<div id="skills"></div>
+</div>
+</section>
+
+<section id="origem" class="page">
+<div class="grid">
+<div class="card c4"><h2>Origem</h2><label>Escolha uma origem</label><select id="origemMain"></select>
+<div id="originInfo" class="trail-box"></div></div>
+<div class="card c8"><h2>Perícias / características da origem</h2><div id="originSkills"></div>
+<label>Características / benefícios</label><textarea id="origemNotas" placeholder="Você pode registrar aqui os benefícios da origem..."></textarea></div>
+</div>
+</section>
+
+<section id="habilidades" class="page">
+<div class="grid">
+<div class="card c6"><h2>Habilidades da Classe</h2><textarea id="habilidadesClasse" placeholder="Habilidades de classe..."></textarea></div>
+<div class="card c6"><h2>Habilidades da Trilha</h2><textarea id="habilidadesTrilha" placeholder="Habilidades da trilha..."></textarea></div>
+<div class="card c6"><h2>Raça</h2><textarea id="habilidadesRaca" placeholder="Bônus e penalidades raciais..."></textarea></div>
+<div class="card c6"><h2>Anomalias / Desordens</h2><textarea id="anomalias" placeholder="Anomalias, Desordens e efeitos..."></textarea></div>
+<div class="card c12"><h2>Anotações</h2><textarea id="anotacoes"></textarea></div>
+</div>
+</section>
+
+<section id="equipamento" class="page">
+<div class="grid">
+<div class="card c6"><h2>Armas</h2><textarea id="armas" placeholder="Nome — teste — dano — crítico — alcance — especial"></textarea></div>
+<div class="card c6"><h2>W-Engine</h2><textarea id="wengine"></textarea></div>
+<div class="card c6"><h2>Bangboo</h2><textarea id="bangboo"></textarea></div>
+<div class="card c6"><h2>Itens</h2><textarea id="itens"></textarea></div>
+<div class="card c12"><h2>História</h2><textarea id="historia" style="min-height:170px"></textarea></div>
+</div>
+</section>
+</main>
+
+<script>
+const skills=[
+["Acrobacia","AGI"],["Adestramento","PRE"],["Artes","PRE"],["Atletismo","FOR"],["Atualidades","INT"],
+["Ciências","INT"],["Crime","AGI"],["Diplomacia","PRE"],["Enganação","PRE"],["Fortitude","VIG"],
+["Furtividade","AGI"],["Iniciativa","AGI"],["Intimidação","PRE"],["Intuição","PRE"],["Investigação","INT"],
+["Luta","FOR"],["Medicina","INT"],["Ocultismo","INT"],["Percepção","PRE"],["Pilotagem","AGI"],
+["Pontaria","AGI"],["Profissão","INT"],["Reflexos","AGI"],["Religião","PRE"],["Sobrevivência","INT"],
+["Tática","INT"],["Tecnologia","INT"],["Vontade","PRE"],
+["Conhecimento Etéreo","INT","home"],["Engenharia Bangboo","INT","home"],["Engenharia de Combate","INT","home"],
+["Etiqueta","PRE","home"],["Sintonia Etérea","INT","home"],["Sobrevivência em Hollow","INT","home"],
+["Resistência Etérea","VIG","home"]
+];
+
+const trails={
+"Atordoador":["Interventor","Dominante","Quebra-Queixo","Controlador"],
+"Ataque":["Duelista","Berserker","Executor","Atirador de Elite"],
+"Anômalo":["Catalisador","Especialista em Desordem","Propagador","Predador"],
+"Ruptura":["Demolidor","Algoz Elemental","Expositor","Vanguarda"],
+"Suporte":["Maestro","Inspirador","Coordenador","Inerventor"],
+"Armeiro":["Carrasco","Bastião","Blacksmith","Sentinela"],
+};
+
+const origins={
+"Acadêmico":["Atualidades","Ciências","Investigação"],"Agente de Saúde":["Intuição","Medicina","Percepção"],
+"Atleta":["Acrobacia","Atletismo","Fortitude"],"Artista":["Artes","Diplomacia","Enganação"],
+"Engenheiro":["Ciências","Engenharia de Combate","Tecnologia"],"Investigador":["Investigação","Percepção","Tática"],
+"Lutador":["Acrobacia","Luta","Reflexos"],"Mercenário":["Iniciativa","Luta","Pontaria"],
+"Policial":["Investigação","Intimidação","Percepção"],"Religioso":["Intuição","Religião","Vontade"],
+"T.I.":["Investigação","Tecnologia","Engenharia Bangboo"],"Trambiqueiro":["Crime","Enganação","Furtividade"],
+"Sobrevivente de Hollow":["Sobrevivência","Sobrevivência em Hollow","Resistência Etérea"],
+"Pesquisador Etéreo":["Conhecimento Etéreo","Ocultismo","Sintonia Etérea"],
+"Operador Bangboo":["Engenharia Bangboo","Tecnologia","Engenharia de Combate"],
+"Qingming":["Disciplina Qingming","Luta","Percepção"]
+};
+const customSkillAttr={"Disciplina Qingming (WIP)":"PRE"};
+
+function optionHTML(list,placeholder="Selecione..."){
+return `<option value="">${placeholder}</option>`+list.map(x=>`<option>${x}</option>`).join("");
+}
+
+function updateTrails(){
+ const c=document.getElementById("classe").value,t=document.getElementById("trilha");
+ const arr=trails[c]||[];
+ t.innerHTML=optionHTML(arr,c?`Selecione uma trilha de ${c}...`:"Selecione uma classe primeiro...");
+ if(!c)t.disabled=true; else t.disabled=false;
+}
+
+function renderOrigins(){
+ const o=document.getElementById("origemMain"), m=document.getElementById("origemSelect");
+ o.innerHTML=optionHTML(Object.keys(origins));
+ m.innerHTML=optionHTML(Object.keys(origins));
+}
+function updateOrigin(){
+ const val=document.getElementById("origemMain").value;
+ document.getElementById("origemSelect").value=val;
+ const box=document.getElementById("originInfo"), sk=document.getElementById("originSkills");
+ if(!val){box.innerHTML='<div class="empty">Selecione uma origem para ver suas perícias.</div>';sk.innerHTML="";return}
+ box.innerHTML=`<h3>${val}</h3><small>Perícias sugeridas pela origem. Você pode registrar detalhes na caixa ao lado.</small>`;
+ sk.innerHTML=origins[val].map(x=>`<div class="list-card"><b>${x}</b><small>Perícia de origem</small></div>`).join("");
+}
+
+function attrValue(a){return Number(document.getElementById(a)?.value||0)}
+function trainValue(v){return v==="Treinado"?5:v==="Veterano"?10:v==="Expert"?15:0}
+
+function renderSkills(){
+ const wrap=document.getElementById("skills");wrap.innerHTML="";
+ skills.forEach((s,i)=>{
+   const [name,attr,type]=s;
+   const row=document.createElement("div");row.className="skill-row";
+   row.innerHTML=`
+   <div class="skill-name">${name} <span class="tag ${type==="home"?"home":""}">${type==="home"?"HOMEBREW":"OP"}</span></div>
+   <div>${attr}</div>
+   <div><select id="tr${i}"><option>Destreinado</option><option>Treinado</option><option>Veterano</option><option>Expert</option></select></div>
+   <div><input id="out${i}" type="number" value="0"></div>
+   <div id="dice${i}" class="total">d20</div>
+   <div id="total${i}" class="total">+0</div>`;
+   wrap.appendChild(row);
+   row.querySelector("select").addEventListener("change",()=>updateSkill(i));
+   row.querySelector("input").addEventListener("input",()=>updateSkill(i));
+ });
+ skills.forEach((_,i)=>updateSkill(i));
+}
+function updateSkill(i){
+ const s=skills[i],attr=s[1],tr=document.getElementById("tr"+i).value;
+ const other=Number(document.getElementById("out"+i).value||0), a=attrValue(attr), bonus=trainValue(tr)+other;
+ document.getElementById("dice"+i).textContent=(Math.max(1,a)||1)+"d20";
+ document.getElementById("total"+i).textContent=(bonus>=0?"+":"")+bonus;
+}
+
+function allInputs(){
+ return [...document.querySelectorAll("input,select,textarea")].filter(x=>x.id);
+}
+function collect(){
+ const d={};
+ allInputs().forEach(x=>d[x.id]=x.type==="checkbox"?x.checked:x.value);
+ d.skillState=skills.map((_,i)=>({
+   training:document.getElementById("tr"+i)?.value||"Destreinado",
+   other:document.getElementById("out"+i)?.value||"0"
+ }));
+ return d;
+}
+function apply(d){
+ allInputs().forEach(x=>{if(d[x.id]!==undefined)x.value=d[x.id]});
+ updateTrails();renderOrigins();updateOrigin();
+ (d.skillState||[]).forEach((s,i)=>{
+   if(document.getElementById("tr"+i)){document.getElementById("tr"+i).value=s.training;document.getElementById("out"+i).value=s.other;updateSkill(i)}
+ });
+}
+function saveSheet(){localStorage.setItem("zzzrpg_sheet",JSON.stringify(collect()));alert("Ficha salva neste navegador.");}
+function loadSheet(){const s=localStorage.getItem("zzzrpg_sheet");if(s)try{apply(JSON.parse(s))}catch(e){}}
+function exportSheet(){
+ const blob=new Blob([JSON.stringify(collect(),null,2)],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+ a.download=((document.getElementById("nome").value||"ficha")+"-zzzrpg.json");a.click();
+ URL.revokeObjectURL(a.href);
+}
+function importSheet(){
+ const input=document.createElement("input");input.type="file";input.accept=".json";
+ input.onchange=()=>{const f=input.files[0];if(!f)return;const r=new FileReader();
+ r.onload=()=>{try{apply(JSON.parse(r.result));saveSheet();alert("Ficha importada.")}catch(e){alert("Arquivo JSON inválido.")}};
+ r.readAsText(f)};input.click();
+}
+function clearSheet(){if(confirm("Limpar todos os dados da ficha?")){localStorage.removeItem("zzzrpg_sheet");location.reload()}}
+
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
+ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+ document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+ b.classList.add("active");document.getElementById(b.dataset.page).classList.add("active");
+}));
+document.getElementById("classe").addEventListener("change",updateTrails);
+document.getElementById("origemMain").addEventListener("change",updateOrigin);
+document.querySelectorAll(".stat input").forEach(x=>x.addEventListener("input",()=>skills.forEach((_,i)=>updateSkill(i))));
+document.getElementById("origemSelect").addEventListener("change",()=>{document.getElementById("origemMain").value=document.getElementById("origemSelect").value;updateOrigin()});
+
+renderSkills();renderOrigins();updateTrails();updateOrigin();loadSheet();
+</script>
+</body>
+</html>
